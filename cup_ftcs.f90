@@ -220,7 +220,7 @@ module sub
 		!-------------------!
 		! Open output files !
 		!-------------------!	    
-	    write(filename,'("output/temp/temp_",f7.2,".dat")') time
+	    write(filename,'("output/temp/temp_",I4,".dat")') int(time)
 	   	open(12,file=filename,status='unknown',RECL=(17*npj+120))
 	   	
 

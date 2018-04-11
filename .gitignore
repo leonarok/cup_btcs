@@ -10,3 +10,6 @@
 *.mako
 *.o
 *.mod
+*.asv
+*.fif
+*.bak
