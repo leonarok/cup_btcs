@@ -81,7 +81,7 @@ module sub
 	 	g_const=9.81	! Standard gravity
 	 	!alpha=0.000069	! Thermal expansion coeff.
 	 	rho=1000		! Density
-	 	mu=0.001   		! Dynamic viscosity
+	 	!mu=0.001   		! Dynamic viscosity
 	 	k=0.64  		! Thermal conductivety 
 	 	cp=4181   		! Specific heat
 	  
@@ -574,6 +574,6 @@ end module sub
     	end if    		    	      
 	end do
 	txttime=tock(txtclock)
-    print *, 'System time for timestep = ', txttime 
+    print *, 'System simulation time = ', txttime 
      
 end program CUPHEAT
