@@ -3,3 +3,10 @@
 *.dat
 *.bak
 *.bak
+*.fbp
+*.bak
+*.exe
+*.make
+*.mako
+*.o
+*.mod
