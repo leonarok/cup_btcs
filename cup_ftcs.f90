@@ -59,7 +59,7 @@ module sub
 		!--------------------------------------!
 		! Set timestep and simulation end time !
 		!--------------------------------------!
-		tend=600
+		tend=3600
 		dt=0.15
 		nsteps=ceiling(tend/dt)
 
@@ -220,7 +220,7 @@ module sub
 		!-------------------!
 		! Open output files !
 		!-------------------!	    
-	    write(filename,'("output/temp/temp_",f6.2,".dat")') time
+	    write(filename,'("output/temp/temp_",f7.2,".dat")') time
 	   	open(12,file=filename,status='unknown',RECL=(17*npj+120))
 	   	
 
@@ -511,7 +511,7 @@ end module sub
 ! Calculates velocities, pressure and temperature development in time on a   !
 ! 2D cartesian grid.                                                         !
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%!
- program SIMPLE
+ program CUPHEAT
 		
 	!----------------!
 	! Initialization !
@@ -543,11 +543,13 @@ end module sub
   	jt=npj/2
   	write(*,*) 'Node for convergence history:',it,jt
  	
+ 	call tick(txtclock)	
+ 	
+ 	
  	!---------------!
 	! March in time !
 	!---------------!
-	do n = 1,nsteps
-		call tick(txtclock)	 
+	do n = 1,nsteps 
 					
 		!---------------------!
 		! Solve temp-equation !
@@ -563,16 +565,15 @@ end module sub
 		!---------------------------------------!
 		! Print results for every 10th timestep !
 		!---------------------------------------!
-   		if (mod(n,10) == 0) then
-      		write (*,'(f6.2,5g15.5)')  n*dt, &
+   		if (mod(n,100) == 0) then
+      		write (*,'(f7.2,5g15.5)')  n*dt, &
              	T(it,jt)
             
         	call print(real(dt*n)) 
         	
-    	end if
-    	txttime=tock(txtclock)
-    	print *, 'System time for timestep = ', txttime  
-    		    	      
+    	end if    		    	      
 	end do
+	txttime=tock(txtclock)
+    print *, 'System time for timestep = ', txttime 
      
-end program SIMPLE
+end program CUPHEAT
