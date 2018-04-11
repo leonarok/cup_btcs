@@ -7,6 +7,7 @@ npj=102;
 
 tend=3600;
 dt=0.15;
+
 printTimes=100;
 print_dt=printTimes*dt;
 printSteps=ceil(tend/print_dt);
@@ -17,8 +18,12 @@ count = '    ';
 tempMid=zeros(1,printSteps);tempTopRight=tempMid;
 tempMean=tempMid;tempMidTop=tempMid;
 
+x=dlmread('output/x.dat');
+y=dlmread('output/y.dat');
+
 
 time=print_dt:print_dt:printSteps*print_dt;
+figure(1)
 
 for n=1:printSteps
     
@@ -32,18 +37,25 @@ for n=1:printSteps
         count(1:4)=fileTime;
     end
     fileloc(18:21)=count;
-    a=dlmread(fileloc);
+    T=dlmread(fileloc);
     
-    tempMid(n)=a(npi/2,npj/2);
-    tempMidTop(n)=a(npi/2,ceil(npj*3/4));
-    tempMean(n)=mean(mean(a(2:npi-1,2:npj-1)));
-    tempTopRight(n)=a(ceil(npi*3/4),ceil(npj*3/4));
+    tempMid(n)=T(npi/2,npj/2);
+    tempMidTop(n)=T(npi/2,ceil(npj*3/4));
+    tempMean(n)=mean(mean(T(2:npi-1,2:npj-1)));
+    tempTopRight(n)=T(ceil(npi*3/4),ceil(npj*3/4));
     
+    
+%     drawnow
+%     surf(x(2:npi-1),y(2:npj-1),T(2:npi-1,2:npj-1)')
+%     axis([x(2) x(npi-1) y(2) y(npj-1) 293.16 356.16])
+%     colorbar
+%     F(n)=getframe(gcf);
 end
 
+figure(2)
 hold on
-plot(time,tempMean)
-plot(time,tempMid)
-plot(time,tempMidTop)
+plot(time,tempMean,'.-')
+plot(time,tempMid,'o-')
+plot(time,tempMidTop,'x-')
 plot(time,tempTopRight)
 legend('mean temp','temp at midnode','mid top temp','top right temp')
