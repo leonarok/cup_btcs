@@ -13,3 +13,7 @@
 *.asv
 *.fif
 *.bak
+*.mat
+*.png
+*.bak
+*.dat

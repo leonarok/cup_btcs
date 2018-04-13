@@ -50,11 +50,9 @@ module sub
 		!-----------------------------------------------------------------!
 		! Set number of grid points in each direction and allocate arrays !
 		!-----------------------------------------------------------------!
-		npi=52
-	  	npj=102
-	  	last=400	
+		npi=42
+	  	npj=82	
 		allocate(T(npi,npj))
-		allocate(er(last))
 	  
 		!--------------------------------------!
 		! Set timestep and simulation end time !
@@ -220,7 +218,7 @@ module sub
 		!-------------------!
 		! Open output files !
 		!-------------------!	    
-	    write(filename,'("output/temp/temp_",f,".dat")') time
+	    write(filename,'("output/temp/temp_",I4,".dat")') int(time)
 	   	open(12,file=filename,status='unknown',RECL=(17*npj+120))
 	   	
 

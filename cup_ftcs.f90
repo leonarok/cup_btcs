@@ -50,17 +50,15 @@ module sub
 		!-----------------------------------------------------------------!
 		! Set number of grid points in each direction and allocate arrays !
 		!-----------------------------------------------------------------!
-		npi=52
-	  	npj=102
-	  	last=400	
+		npi=42
+	  	npj=82	
 		allocate(T(npi,npj))
-		allocate(er(last))
 	  
 		!--------------------------------------!
 		! Set timestep and simulation end time !
 		!--------------------------------------!
 		tend=3600
-		dt=0.15
+		dt=0.5
 		nsteps=ceiling(tend/dt)
 
 		!---------------------------------!
@@ -565,7 +563,7 @@ end module sub
 		!---------------------------------------!
 		! Print results for every 10th timestep !
 		!---------------------------------------!
-   		if (mod(n,100) == 0) then
+   		if (mod(n,10) == 0) then
       		write (*,'(f7.2,5g15.5)')  n*dt, &
              	T(it,jt)
             
