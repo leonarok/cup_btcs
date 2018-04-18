@@ -45,10 +45,10 @@ for n=1:printSteps
     tempTopRight(n)=T(ceil(npi*3/4),ceil(npj*3/4));
     
     
-%     drawnow
-%     surf(x(2:npi-1),y(2:npj-1),T(2:npi-1,2:npj-1)')
-%     axis([x(2) x(npi-1) y(2) y(npj-1) 293.16 356.16])
-%     colorbar
+    drawnow
+    surf(x(2:npi-1),y(2:npj-1),T(2:npi-1,2:npj-1)')
+    axis([x(2) x(npi-1) y(2) y(npj-1) 293.16 356.16])
+    colorbar
 %     F(n)=getframe(gcf);
 end
 
