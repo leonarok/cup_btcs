@@ -88,7 +88,7 @@ module sub
 		! Set cup/wall heat loss parameters !
 		!-----------------------------------!
 	    cup_width=0.01
-	    k_cup=77.1	
+	    k_cup=2.09	
 	
 	end subroutine init
 
