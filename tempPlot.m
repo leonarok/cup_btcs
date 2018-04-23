@@ -2,20 +2,20 @@ clear all
 close all
 clc
 
-npi=42;
-npj=82;
+npi=102;
+npj=122;
 
 tend=3600;
-dt=0.5;
+dt=10;
 
-printTimes=10;
+printTimes=1;
 print_dt=printTimes*dt;
 printSteps=ceil(tend/print_dt);
 
 fileloc = 'output/temp/temp_    .dat';
 count = '    ';
 
-tempMid=83*ones(1,printSteps);tempTopRight=tempMid;
+tempMid=80*ones(1,printSteps);tempTopRight=tempMid;
 tempMean=tempMid;tempMidTop=tempMid;tempBotRight=tempMid;
 
 x=dlmread('output/x.dat');
@@ -23,7 +23,7 @@ y=dlmread('output/y.dat');
 
 
 time=0:print_dt:printSteps*print_dt;
-% figure(1)
+figure('rend','painters','pos',[100 100 900 600])
 
 for n=1:printSteps
     
@@ -48,10 +48,10 @@ for n=1:printSteps
     tempBotRight(n+1)=T(ceil(npi*1/6),ceil(npj*1/6));
     
     
-    drawnow
-    surf(x(2:npi-1),y(2:npj-1),T(2:npi-1,2:npj-1)')
-    axis([x(2) x(npi-1) y(2) y(npj-1) 293.16 356.16])
-    colorbar
+%     drawnow
+%     surf(x(2:npi-1),y(2:npj-1),T(2:npi-1,2:npj-1)')
+%     axis([x(1) x(npi) y(1) y(npj) 0 90])
+%     colorbar
 %     F(n)=getframe(gcf);
 end
 
