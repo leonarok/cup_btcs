@@ -5,6 +5,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 module declarations
 
+
 	implicit none
 	private
 	double precision,public, allocatable, dimension(:) :: x,x_u,y,y_v,er
@@ -79,9 +80,7 @@ module sub
 		! Set constant values !
 		!---------------------!
 	 	g_const=9.81	! Standard gravity
-	 	!alpha=0.000069	! Thermal expansion coeff.
 	 	rho=1000		! Density
-	 	!mu=0.001   		! Dynamic viscosity
 	 	k=0.64  		! Thermal conductivity 
 	 	cp=4181   		! Specific heat
 	  
@@ -123,8 +122,8 @@ module sub
 		!----------------------------------!
 		! Set size of computational domain !
 		!----------------------------------!
-	  	xl=0.05-cup_width*2
-	  	yl=0.1-cup_width
+	  	xl=0.08-cup_width*2
+	  	yl=0.09-cup_width
 		
 		!---------------------------!
 		! Calculate inner grid size !
@@ -424,6 +423,7 @@ module sub
 	  	integer :: i,j
 	  	real :: fw,fe,fs,fn,dw,de,ds,dn,areaw,areae,areas,arean,sp,su
 	  	real :: ap_tilde,ap_zero,h_tot
+	  	real :: r_w,r_e,dx_cell,dy_cell,volume
 		
 		!-----------------------!
 		! Iterate through array !
@@ -434,10 +434,22 @@ module sub
 				!-------------------------!
 				! Find area of cell faces !
 				!-------------------------!
-	      		areaw=y_v(j+1)-y_v(j)
-	      		areae=areaw
-	      		areas=x_u(i+1)-x_u(i)
+				dx_cell=y_v(j+1)-y_v(j)
+				dy_cell=x_u(i+1)-x_u(i)
+				r_w=abs(xl/2-x_u(i))
+				r_e=abs(xl/2-x_u(i+1))
+				
+				areaw=pi*r_w*dy_cell
+	      		areae=pi*r_e*dy_cell
+	      		areas=pi/2*abs(r_w**2-r_e**2)
 	      		arean=areas
+	      		volume=areas*dy
+	      		!write(*,*) 'test',volume
+				
+!	      		areaw=y_v(j+1)-y_v(j)
+!	      		areae=areaw
+!	      		areas=x_u(i+1)-x_u(i)
+!	      		arean=areas
 				
 				!---------------------------!
 				! Find convective mass flux !
@@ -450,14 +462,6 @@ module sub
 				!---------------------------------------------!
 				! Find diffusion conductance by harmonic mean !
 				!---------------------------------------------!
-!				dw=((k(i-1,j)*k(i,j))/(k(i-1,j)*    &
-!	            	(x(i)-x_u(i))+k(i,j)*(x_u(i)-x(i-1))))*areaw
-!	        	de=((k(i,j)*k(i+1,j))/(k(i,j)*       &
-!	            	(x(i+1)-x_u(i+1))+k(i+1,j)*(x_u(i+1)-x(i))))*areae
-!	        	ds=((k(i,j-1)*k(i,j))/(k(i,j-1)*      &
-!	            	(y(j)-y_v(j))+k(i,j)*(y_v(j)-y(j-1))))*areas
-!	        	dn=((k(i,j)*k(i,j+1))/(k(i,j)*         &
-!	            	(y(j+1)-y_v(j+1))+k(i,j+1)*(y_v(j+1)-y(j))))*arean
 				dw=0.5*( k+k )/(x(i)-x(i-1))*areaw		
 				de=0.5*( k+k )/(x(i+1)-x(i))*areae
 				ds=0.5*( k+k )/(y(j)-y(j-1))*areas
@@ -471,32 +475,32 @@ module sub
 	      		! Check if next to wall. If true, add heat loss through wall
 	        	if (i==2) then
 	        		Ra=g_const/(nu_a*beta_a*T_amb)*(T(i,npj/2)-T_amb)*yl**3
-	        		!write(*,*) 'Ra',Ra
+	        		write(*,*) 'Ra',Ra
 	        		h_co=k_a/yl*( 0.68+0.67*Ra**0.25/	&
 	        			( 1+(0.492/Pr_a)**(9/16) )**(4/9) )  
-	        		!write(*,*) 'Ra',h_co  		
-	        		h_tot=1/(cup_width/k_cup + 1/22)
+	        		!write(*,*) 'h_co',h_co  		
+	        		h_tot=1/(cup_width/k_cup + 1/h_co)
 	        		
 	          		su=su-h_tot*areaw*(T(i,j)-T_amb)
 	        	elseif (i==npi-1) then
 	        		Ra=g_const/(nu_a*beta_a*T_amb)*(T(i,npj/2)-T_amb)*yl**3
 	        		h_co=k_a/yl*( 0.68+0.67*Ra**0.25/	&
 	        			( 1+(0.492/Pr_a)**(9/16) )**(4/9) )
-	        		h_tot=1/(cup_width/k_cup + 1/22)
+	        		h_tot=1/(cup_width/k_cup + 1/h_co)
 	        		
 	        		su=su-h_tot*areae*(T(i,j)-T_amb)
 	        	end if
 	        	if (j==2) then
-	        		Ra=g_const/(nu_a*beta_a*T_amb)*(T(i,j)-T_amb)*areas**3
+	        		!Ra=g_const/(nu_a*beta_a*T_amb)*(T(i,j)-T_amb)*areas**3
 	        		!h_co=k_a*0.54*Ra**0.25/areas
-	        		h_co=5
+	        		h_co=10
 	        		h_tot=1/(cup_width/k_cup + 1/h_co)
 	        		
 	          		su=su-h_tot*areas*(T(i,j)-T_amb)
 	        	elseif (j==npj-1) then
-	        		Ra=g_const/(nu_a*beta_a*T_amb)*(T(i,j)-T_amb)*areas**3
+	        		!Ra=g_const/(nu_a*beta_a*T_amb)*(T(i,j)-T_amb)*areas**3
 	        		!h_co=k_a*0.27*Ra**0.25/areas
-	        		h_co=65
+	        		h_co=45
 	        		h_tot=1/(cup_width/k_cup + 1/h_co)
 	        		
 	        		su=su-h_tot*arean*(T(i,j)-T_amb)
@@ -515,7 +519,7 @@ module sub
 	            !------------------------------!
 				! Establish center coefficient !
 				!------------------------------!
-	        	ap_zero= rho*cp*areas*areaw/dt
+	        	ap_zero= rho*cp*volume/dt
 	        	ap_tilde=aw(i,j)+ae(i,j)+as(i,j)+an(i,j)+fe-fw+fn-fs-sp
 	        	ap(i,j)=ap_zero+ap_tilde
 	      	

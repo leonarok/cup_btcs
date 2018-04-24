@@ -7,10 +7,10 @@ y=dlmread('output/y.dat');
 npi=length(x);
 npj=length(y);
 
-tend=3250;
-dt=10;
+tend=3600;
+dt=1;
 
-printTimes=1;
+printTimes=10;
 print_dt=printTimes*dt;
 printSteps=ceil(tend/print_dt);
 
@@ -72,7 +72,7 @@ grid minor
 legend('Mean','Middle','Near top','Near top right','Near bottom right')
 
 figure('rend','painters','pos',[100 100 900 600])
-surf(x(2:npi-1),y(2:npj-1),T(2:npi-1,2:npj-1)')
+surf(x(2:npi-1),y(2:npj-1),T(2:npi-1,2:npj-1)','EdgeColor','none')
 title(sprintf('t=%g s, n=%g',tend,npi*npj))
 axis([x(2) x(npi-1) y(2) y(npj-1) 20 83])
 xlabel('Width [m]')
