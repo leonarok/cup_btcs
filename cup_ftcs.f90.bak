@@ -52,7 +52,7 @@ module sub
 		!-----------------------------------------------------------------!
 		! Set number of grid points in each direction and allocate arrays !
 		!-----------------------------------------------------------------!
-		npi=102
+		npi=92
 	  	npj=122	
 		allocate(T(npi,npj))
 	  
@@ -82,7 +82,7 @@ module sub
 	 	!alpha=0.000069	! Thermal expansion coeff.
 	 	rho=1000		! Density
 	 	!mu=0.001   		! Dynamic viscosity
-	 	k=0.64  		! Thermal conductivety 
+	 	k=0.64  		! Thermal conductivity 
 	 	cp=4181   		! Specific heat
 	  
 	  
@@ -96,6 +96,7 @@ module sub
 	  	k_a=0.025
 	  	nu_a=0.0000148
 	
+		h_co=80;
 	end subroutine init
 
 
@@ -122,8 +123,8 @@ module sub
 		!----------------------------------!
 		! Set size of computational domain !
 		!----------------------------------!
-	  	xl=0.05
-	  	yl=0.1
+	  	xl=0.05-cup_width*2
+	  	yl=0.1-cup_width
 		
 		!---------------------------!
 		! Calculate inner grid size !
@@ -469,29 +470,33 @@ module sub
 	      		su=0.
 	      		! Check if next to wall. If true, add heat loss through wall
 	        	if (i==2) then
-	        		Ra=g_const/(nu_a*beta_a*T(i,j))*(T(i,j)-T_amb)*areaw**3
-	        		h_co=k_a/areaw*( 0.68+0.67*Ra**0.25/	&
-	        			( 1+(0.492/Pr_a)**(9/16) )**(4/9) )    		
-	        		h_tot=1/(cup_width/k_cup + 1/h_co)
+	        		Ra=g_const/(nu_a*beta_a*T_amb)*(T(i,npj/2)-T_amb)*yl**3
+	        		!write(*,*) 'Ra',Ra
+	        		h_co=k_a/yl*( 0.68+0.67*Ra**0.25/	&
+	        			( 1+(0.492/Pr_a)**(9/16) )**(4/9) )  
+	        		!write(*,*) 'Ra',h_co  		
+	        		h_tot=1/(cup_width/k_cup + 1/22)
 	        		
 	          		su=su-h_tot*areaw*(T(i,j)-T_amb)
 	        	elseif (i==npi-1) then
-	        		Ra=g_const/(nu_a*beta_a*T(i,j))*(T(i,j)-T_amb)*areae**3
-	        		h_co=k_a/areae*( 0.68+0.67*Ra**0.25/	&
+	        		Ra=g_const/(nu_a*beta_a*T_amb)*(T(i,npj/2)-T_amb)*yl**3
+	        		h_co=k_a/yl*( 0.68+0.67*Ra**0.25/	&
 	        			( 1+(0.492/Pr_a)**(9/16) )**(4/9) )
-	        		h_tot=1/(cup_width/k_cup + 1/h_co)
+	        		h_tot=1/(cup_width/k_cup + 1/22)
 	        		
 	        		su=su-h_tot*areae*(T(i,j)-T_amb)
 	        	end if
 	        	if (j==2) then
-	        		Ra=g_const/(nu_a*beta_a*T(i,j))*(T(i,j)-T_amb)*areaw**3
-	        		h_co=k_a*0.54*Ra**0.25/areaw
+	        		Ra=g_const/(nu_a*beta_a*T_amb)*(T(i,j)-T_amb)*areas**3
+	        		!h_co=k_a*0.54*Ra**0.25/areas
+	        		h_co=5
 	        		h_tot=1/(cup_width/k_cup + 1/h_co)
 	        		
 	          		su=su-h_tot*areas*(T(i,j)-T_amb)
 	        	elseif (j==npj-1) then
-	        		Ra=g_const/(nu_a*beta_a*T(i,j))*(T(i,j)-T_amb)*areaw**3
-	        		h_co=k_a*0.27*Ra**0.25/areaw
+	        		Ra=g_const/(nu_a*beta_a*T_amb)*(T(i,j)-T_amb)*areas**3
+	        		!h_co=k_a*0.27*Ra**0.25/areas
+	        		h_co=65
 	        		h_tot=1/(cup_width/k_cup + 1/h_co)
 	        		
 	        		su=su-h_tot*arean*(T(i,j)-T_amb)
@@ -584,11 +589,11 @@ end module sub
 		! Specify boundary values !
 		!-------------------------!
 		call bound()			
-		
+		!write(*,*) T(1)
 		!---------------------------------------!
 		! Print results for every 10th timestep !
 		!---------------------------------------!
-   		if (mod(n,1) == 0) then
+   		if (mod(n,10) == 0) then
       		write (*,'(f7.2,5g15.5)')  n*dt, &
              	T(it,jt)
             
