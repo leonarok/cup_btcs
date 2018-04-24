@@ -24,7 +24,7 @@ tempMean=tempMid;tempMidTop=tempMid;tempBotRight=tempMid;
 
 
 time=0:print_dt:printSteps*print_dt;
-figure('rend','painters','pos',[100 100 900 600])
+% figure('rend','painters','pos',[100 100 900 600])
 
 for n=1:printSteps
     
